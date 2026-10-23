@@ -1,0 +1,31 @@
+name: Setup Sklair
+description: Install a pinned Sklair release and add it to PATH
+author: Numelon
+
+branding:
+  icon: feather
+  color: yellow
+
+inputs:
+  version:
+    description: Sklair release version, with or without the leading v
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: Install Sklair on Linux or macOS
+      if: runner.os != 'Windows'
+      shell: bash
+      env:
+        SKLAIR_VERSION: ${{ inputs.version }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: bash "$ACTION_PATH/scripts/install.sh"
+
+    - name: Install Sklair on Windows
+      if: runner.os == 'Windows'
+      shell: pwsh
+      env:
+        SKLAIR_VERSION: ${{ inputs.version }}
+        ACTION_PATH: ${{ github.action_path }}
+      run: '& (Join-Path $env:ACTION_PATH "scripts/install.ps1")'
